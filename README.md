@@ -35,7 +35,7 @@ Die wichtigsten Tasks:
 | `build` | baut alles, deployt und testet
 | `test` | führt tests aus
 | `deploy` | erstellt hochladbare ZIP-Pakete
-| `run` oder `testDeployed` | startet den server und 2 simpleclients und überpüft, ob das Spiel normal endet
+| `testGame` | startet den server und 2 simpleclients und überpüft, ob das Spiel normal endet
 | `startServer` oder `:server:run` | führt den Server direkt vom Quellcode aus
 | `:server:startProduction` | startet den gepackten Server
 | `:player:run` | startet den SimpleClient direkt vom Sourcecode

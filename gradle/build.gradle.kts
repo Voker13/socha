@@ -5,9 +5,9 @@ import java.io.InputStream
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.50"
-    id("com.github.ben-manes.versions") version "0.24.0"
-    id("org.jetbrains.dokka") version "0.9.17"
+    kotlin("jvm") version "1.3.61"
+    id("com.github.ben-manes.versions") version "0.27.0"
+    id("org.jetbrains.dokka") version "0.10.0"
 }
 
 val gameName by extra { property("socha.gameName") as String }
@@ -36,17 +36,9 @@ tasks {
     }
     
     val doc by creating(DokkaTask::class) {
-        val includedProjects = arrayOf("sdk", "plugin")
-        mustRunAfter(includedProjects.map { "$it:classes" })
-        moduleName = "Software-Challenge API $version"
-        val sourceSets = includedProjects.map { project(it).sourceSets.main.get() }
-        sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
-        outputDirectory = deployDir.resolve("doc").toString()
-        outputFormat = "javadoc"
-        jdkVersion = 8
-        doFirst {
-            classpath = files(sourceSets.map { it.runtimeClasspath }.flatMap { it.files }.filter { it.exists() })
-        }
+                outputDirectory = deployDir.resolve("doc").toString()
+                outputFormat = "javadoc"
+            subProjects = listOf("sdk", "plugin")
     }
     
     val deploy by creating {
@@ -197,7 +189,6 @@ tasks {
     build {
         group = mainGroup
     }
-    replace("run").dependsOn(integrationTest)
 }
 
 // == Cross-project configuration ==
@@ -215,13 +206,11 @@ allprojects {
         apply(plugin = "maven")
         tasks {
             val doc by creating(DokkaTask::class) {
-                moduleName = "Software-Challenge API $version"
-                classpath = sourceSets.main.get().runtimeClasspath
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
-                jdkVersion = 8
-                doFirst {
-                    classpath = files(sourceSets.main.get().runtimeClasspath.files.filter { it.exists() })
+                configuration {
+                    moduleName = "Software-Challenge API $version"
+                    jdkVersion = 8
                 }
             }
             val docJar by creating(Jar::class) {
@@ -266,7 +255,7 @@ project("sdk") {
         api("jargs", "jargs", "1.0")
         api("ch.qos.logback", "logback-classic", "1.2.3")
         
-        implementation("org.hamcrest", "hamcrest-core", "2.1")
+        implementation("org.hamcrest", "hamcrest-core", "2.2")
         implementation("net.sf.kxml", "kxml2", "2.3.0")
         implementation("xmlpull", "xmlpull", "1.1.3.1")
     }
@@ -282,7 +271,7 @@ project("plugin") {
         api(project(":sdk"))
         
         testImplementation("junit", "junit", "4.12")
-        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.3.2")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.4.2")
     }
     
     tasks.jar.get().archiveBaseName.set(game)
